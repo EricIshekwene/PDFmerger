@@ -65,9 +65,11 @@ function FileAdder({ selectedOption }: FileAdderProps) {
 
     // Update split pages array when split count changes
     useEffect(() => {
-        const newSplitPages = Array(splitCount - 1).fill('');
-        setSplitPages(newSplitPages);
-    }, [splitCount]);
+        if (selectedOption === "split-pdf") {
+            const newSplitPages = Array(splitCount - 1).fill('');
+            setSplitPages(newSplitPages);
+        }
+    }, [splitCount, selectedOption]);
 
     const showError = (message: string) => {
         setError(message);
@@ -152,7 +154,7 @@ function FileAdder({ selectedOption }: FileAdderProps) {
         }
     };
 
-    const removeFile = (id: string) => {
+    const _removeFile = (id: string) => {
         setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
     };
 
@@ -164,8 +166,6 @@ function FileAdder({ selectedOption }: FileAdderProps) {
                 return "Drag and drop your PDF to split it";
             case "compress-pdf":
                 return "Drag and drop your PDF to compress it";
-            case "convert-pdf":
-                return "Drag and drop your PDF to convert it";
             default:
                 return "Drag and drop your PDFs here";
         }
@@ -388,13 +388,6 @@ function FileAdder({ selectedOption }: FileAdderProps) {
                 }
                 console.log("Compressing PDF:", fileNames[0]);
                 await compressPDF(files[0]);
-                break;
-            case "convert-pdf":
-                if (files.length === 0) {
-                    showError("Please add files to convert to PDF");
-                    return;
-                }
-                console.log("Converting files to PDF:", fileNames);
                 break;
         }
     };
